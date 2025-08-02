@@ -411,7 +411,7 @@ export default function Panel({ loggedIn, role, permissions, roles, listPermissi
 		}
 
 		try {
-			const res = await fetch('/api/login-checker', {
+			const res = await fetch('/api/login-parser', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ login: value }),
@@ -420,12 +420,17 @@ export default function Panel({ loggedIn, role, permissions, roles, listPermissi
 			const data = await res.json();
 
 			if (data.exists) {
-				setUsrRole(data.role);
-				setUserBtnStatus({ state: false, text: "Изменить" })
-				setLoginStatus({ color: "#2EFF52", text: "✓ Существует" });
+				if (action == "edit-role" && !data.allowed) {
+					setUserBtnStatus({ state: true, text: "Изменить" })
+					setLoginStatus({ color: "#F54927", text: "⨯ Ваша роль ниже чем нужно" });
+				} else {
+					setUsrRole(data.role);
+					setUserBtnStatus({ state: false, text: "Изменить" })
+					setLoginStatus({ color: "#2EFF52", text: "✓ Существует" });
+				}
 			} else {
 				setUserBtnStatus({ state: false, text: "Изменить" })
-				setLoginStatus({ color: "#F54927", text: "✓ Не существует" });
+				setLoginStatus({ color: "#F54927", text: "⨯ Не существует" });
 			}
 		} catch (err: unknown) {
 			if (err instanceof Error) {
@@ -563,9 +568,19 @@ export default function Panel({ loggedIn, role, permissions, roles, listPermissi
 							/>
 							<select className="p-3 m-2 bg-white/10 backdrop-blur-md border border-white/30 rounded-3xl text-white" value={usrRole} onChange={(e) => setUsrRole(e.target.value)}>
 								<option className="text-black" value="" selected>Выберите роль</option>
-								{Object.keys(roles).map((perm) => {
+								{Object.keys(roles).map((tempRole, i) => {
+									if (!isRoleFound) {
+										if (tempRole == role) {
+											isRoleFound = true;
+										} else {
+											return null;
+										}
+									}
+									if(Object.keys(roles).length-1 === i){
+										isRoleFound = false
+									}
 									return (
-										<option className="text-black" key={perm} value={perm}>{perm}</option>
+										<option className="text-black" key={tempRole} value={tempRole}>{tempRole}</option>
 									);
 								})}
 							</select>
@@ -659,9 +674,19 @@ export default function Panel({ loggedIn, role, permissions, roles, listPermissi
 							/>
 							<select className="p-3 m-2 bg-white/10 backdrop-blur-md border border-white/30 rounded-3xl text-white" value={usrRole} onChange={(e) => setUsrRole(e.target.value)}>
 								<option className="text-black" value="" selected>Выберите роль</option>
-								{Object.keys(roles).map((perm) => {
+								{Object.keys(roles).map((tempRole, i) => {
+									if (!isRoleFound) {
+										if (tempRole == role) {
+											isRoleFound = true;
+										} else {
+											return null;
+										}
+									}
+									if(Object.keys(roles).length-1 === i){
+										isRoleFound = false
+									}
 									return (
-										<option className="text-black" key={perm} value={perm}>{perm}</option>
+										<option className="text-black" key={tempRole} value={tempRole}>{tempRole}</option>
 									);
 								})}
 							</select>
@@ -717,7 +742,9 @@ export default function Panel({ loggedIn, role, permissions, roles, listPermissi
 						const isFirst = i === 0 || i - NotAllowedToEditRoles.length === 0;
 						const isLast = i === Object.keys(allRoles).length - 1;
 
-
+						if (isLast) {
+							isRoleFound = false;
+						}
 
 						return (
 							<span key={tempRole} className="flex gap-1 items-center">

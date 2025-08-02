@@ -13,7 +13,8 @@
   "manager": [
     "action-user",
     "add-role",
-    "editing-roles"
+    "editing-roles",
+    "editing-user"
   ],
   "helper": [
     "insert-db",
