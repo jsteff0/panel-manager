@@ -1,0 +1,28 @@
+{
+  "admin": [
+    "add-role",
+    "editing-roles",
+    "action-user",
+    "delete-db",
+    "downloading",
+    "insert-db",
+    "update-db",
+    "delete-role",
+    "editing-user"
+  ],
+  "manager": [
+    "action-user",
+    "add-role",
+    "editing-roles"
+  ],
+  "helper": [
+    "insert-db",
+    "update-db",
+    "delete-db",
+    "downloading"
+  ],
+  "hr-dir": [
+    "action-user",
+    "editing-roles"
+  ]
+}
